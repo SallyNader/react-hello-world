@@ -24,10 +24,12 @@ jobs:
           node-version: '22' 
 
       - name: Install Dependencies with Yarn
-        run: yarn install
+        run: yarn install --frozen-lockfile
 
       - name: Build React Application with Yarn
         run: yarn build # This creates the 'build' folder
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
 
       - name: Copy Dockerfile and app to EC2
         uses: appleboy/scp-action@v0.1.7
