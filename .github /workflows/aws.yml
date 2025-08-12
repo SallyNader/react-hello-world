@@ -27,3 +27,33 @@ jobs:
 
       - name: Build React Application with Yarn
         run: yarn build # This creates the 'build' folder
+
+      - name: Copy Dockerfile and app to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          source: .
+          target: ~/react-app # Change if you want a different path on EC2
+      - name: Deploy to AWS EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          source: build/
+          target: /var/www/html/ # Change to your EC2 web root
+
+      - name: Build and Run Docker Container on EC2
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            cd ~/react-app
+            docker build -t react-app .
+            docker stop react-app || true
+            docker rm react-app || true
+            docker run -d --name react-app -p 80:80 react-app
