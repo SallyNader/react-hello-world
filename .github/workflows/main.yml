@@ -1,0 +1,60 @@
+name: React.js CI/CD
+
+on:
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - master
+  # pull_request:
+  #   branches:
+  #     - master
+
+jobs:
+  build: 
+    name: Build React App
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' 
+
+      - name: Install Dependencies with Yarn
+        run: yarn install
+
+      - name: Build React Application with Yarn
+        run: yarn build # This creates the 'build' folder
+
+      - name: Copy Dockerfile and app to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ vars.HOST }}
+          username: ${{ vars.USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          source: .
+          target: ~/react-app # Change if you want a different path on EC2
+      - name: Deploy to AWS EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ vars.HOST }}
+          username: ${{ vars.USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          source: build/
+          target: /var/www/html/ # Change to your EC2 web root
+
+      - name: Build and Run Docker Container on EC2
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ vars.HOST }}
+          username: ${{ vars.USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            cd ~/react-app
+            docker build -t react-app .
+            docker stop react-app || true
+            docker rm react-app || true
+            docker run -d --name react-app -p 80:80 react-app
