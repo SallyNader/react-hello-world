@@ -45,6 +45,7 @@ jobs:
       #     target: ~/react-app # Change if you want a different path on EC2
       - name: Prepare SSH key and test connection
         run: |
+          cat "$EC2_KEY"
           echo "$EC2_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOST} 'echo Connected'
         env:
