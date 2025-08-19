@@ -42,15 +42,15 @@ jobs:
       #     key: ${{ env.EC2_KEY }}
       #     source: .
       #     target: ~/react-app # Change if you want a different path on EC2
-      - name: Prepare SSH key and test connection and  Copy Dockerfile and app to EC2
-        run: |
-          echo "$EC2_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOST} 'echo Connected'
-          scp -o StrictHostKeyChecking=no -i private_key -r $WORKSPACE ${USERNAME}@${HOST}:~/react-new
-        env:
-          EC2_KEY: ${{ env.EC2_KEY }}
-          USERNAME: ${{ env.USERNAME }}
-          HOST: ${{ env.HOST }}
+      - name: Copy all repo files to EC2 via SSH key
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ env.HOST }}
+          username: ${{ env.USERNAME }}
+          key: ${{ env.EC2_KEY }}
+          port: 22
+          source: "*"
+          target: ~/react-new
     
 
       - name: Build and Run Docker Container on EC2
