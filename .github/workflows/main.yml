@@ -14,8 +14,8 @@ jobs:
     name: Build React App
     runs-on: ubuntu-latest
     env:
-      HOST: ${{ secrets.HOST }}
-      USERNAME: ${{ secrets.USERNAME }}
+      HOST: ${{ vars.HOST }}
+      USERNAME: ${{ vars.USERNAME }}
       EC2_KEY: ${{ secrets.EC2_KEY }}
 
     steps:
