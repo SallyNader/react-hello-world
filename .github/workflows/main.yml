@@ -48,7 +48,7 @@ jobs:
       - name: Prepare SSH key and test connection and  Copy Dockerfile and app to EC2
         run: |
           echo "$EC2_KEY" > private_key && chmod 600 private_key
-          scp -o StrictHostKeyChecking=no -rp -i ~/.ssh/id_rsa $WORKSPACE ${USERNAME}@${HOST}:/home/ubuntu/react
+          scp -o StrictHostKeyChecking=no -rp -i private_key $WORKSPACE ${USERNAME}@${HOST}:/home/ubuntu/react
           # ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOST} 'echo Connected'
           # scp -o StrictHostKeyChecking=no -i private_key -r * ${USERNAME}@${HOST}:~/react-app
         env:
