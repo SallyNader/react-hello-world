@@ -19,21 +19,21 @@ jobs:
       EC2_KEY: ${{ secrets.EC2_KEY }}
 
     steps:
-      # - name: Checkout Repository
-      #   uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-      # - name: Setup Node.js
-      #   uses: actions/setup-node@v3
-      #   with:
-      #     node-version: '22' 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22' 
 
-      # - name: Install Dependencies with Yarn
-      #   run: yarn install --frozen-lockfile
+      - name: Install Dependencies with Yarn
+        run: yarn install --frozen-lockfile
 
-      # - name: Build React Application with Yarn
-      #   run: yarn build # This creates the 'build' folder
-      #   env:
-      #     NODE_OPTIONS: --openssl-legacy-provider
+      - name: Build React Application with Yarn
+        run: yarn build # This creates the 'build' folder
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
 
       # - name: Copy Dockerfile and app to EC2
       #   uses: appleboy/scp-action@v0.1.7
@@ -43,24 +43,16 @@ jobs:
       #     key: ${{ env.EC2_KEY }}
       #     source: .
       #     target: ~/react-app # Change if you want a different path on EC2
-      - name: Prepare SSH key and test connection
+      - name: Prepare SSH key and test connection and  Copy Dockerfile and app to EC2
         run: |
-          
           echo "$EC2_KEY" > private_key && chmod 600 private_key
-          cat private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOST} 'echo Connected'
+          scp -o StrictHostKeyChecking=no -i private_key -r . ${USERNAME}@${HOST}:~/react-app
         env:
           EC2_KEY: ${{ env.EC2_KEY }}
           USERNAME: ${{ env.USERNAME }}
           HOST: ${{ env.HOST }}
-      - name: Deploy to AWS EC2
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ env.HOST }}
-          username: ${{ env.USERNAME }}
-          key: ${{ env.EC2_KEY }}
-          source: build/
-          target: /var/www/html/ # Change to your EC2 web root
+    
 
       - name: Build and Run Docker Container on EC2
         uses: appleboy/ssh-action@v0.1.10
