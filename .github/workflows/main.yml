@@ -35,14 +35,14 @@ jobs:
         env:
           NODE_OPTIONS: --openssl-legacy-provider
 
-      - name: Copy Dockerfile and app to EC2
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ env.HOST }}
-          username: ${{ env.USERNAME }}
-          key: ${{ env.EC2_KEY }}
-          source: .
-          target: ~/react-app # Change if you want a different path on EC2
+      # - name: Copy Dockerfile and app to EC2
+      #   uses: appleboy/scp-action@v0.1.7
+      #   with:
+      #     host: ${{ env.HOST }}
+      #     username: ${{ env.USERNAME }}
+      #     key: ${{ env.EC2_KEY }}
+      #     source: .
+      #     target: ~/react-app # Change if you want a different path on EC2
       - name: Prepare SSH key and test connection
         run: |
           echo "$EC2_KEY" > private_key && chmod 600 private_key
