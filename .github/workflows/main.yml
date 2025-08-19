@@ -53,7 +53,7 @@ jobs:
           key: ${{ env.EC2_KEY }}
           script: |
             cd ~/react-app
-            docker build -t react-app .
-            docker stop react-app || true
-            docker rm react-app || true
-            docker run -d --name react-app -p 80:80 react-app
+            sudo docker build -t react-app .
+            sudo docker stop react-app || true
+            sudo docker rm react-app || true
+            sudo docker run -d --name react-app -p 3000:3000 react-app
