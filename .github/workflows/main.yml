@@ -2,12 +2,9 @@ name: React.js CI/CD
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - master
-  # pull_request:
-  #   branches:
-  #     - master
+  push:
+    branches:
+      - master
 
 jobs:
   build:
