@@ -48,9 +48,9 @@ jobs:
           echo "$EC2_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOST} 'echo Connected'
         env:
-          EC2_KEY: ${{ secrets.EC2_KEY }}
-          USERNAME: ${{ secrets.USERNAME }}
-          HOST: ${{ secrets.HOST }}
+          EC2_KEY: ${{ env.EC2_KEY }}
+          USERNAME: ${{ env.USERNAME }}
+          HOST: ${{ env.HOST }}
       - name: Deploy to AWS EC2
         uses: appleboy/scp-action@v0.1.7
         with:
